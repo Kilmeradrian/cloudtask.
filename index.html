@@ -4,8 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>CloudTask v1.1</title>
+  <title>CloudTask v1.2</title>
 
   <style>
     * {
@@ -27,7 +26,7 @@
 
     .app {
       width: 100%;
-      max-width: 820px;
+      max-width: 920px;
       background: white;
       border-radius: 20px;
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.10);
@@ -47,16 +46,16 @@
     }
 
     .header p {
+      margin-bottom: 6px;
       opacity: 0.9;
-      margin-bottom: 5px;
     }
 
     .version {
       display: inline-block;
       margin-top: 12px;
+      background: rgba(255, 255, 255, 0.18);
       padding: 6px 12px;
       border-radius: 20px;
-      background: rgba(255, 255, 255, 0.18);
     }
 
     .content {
@@ -65,16 +64,15 @@
 
     .input-group {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 160px 100px;
+      grid-template-columns: minmax(0, 1fr) 150px 160px 110px;
       gap: 10px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
-    input[type="text"],
-    select {
+    input, select {
       width: 100%;
       min-width: 0;
-      padding: 14px;
+      padding: 13px;
       border: 1px solid #d1d5db;
       border-radius: 10px;
       font-size: 15px;
@@ -91,27 +89,26 @@
       opacity: 0.85;
     }
 
-    button:focus-visible,
-    input:focus-visible,
-    select:focus-visible {
-      outline: 2px solid #8b5e34;
-      outline-offset: 2px;
-    }
-
     #addTaskBtn {
       border: none;
+      border-radius: 10px;
       background: #C7A175;
       color: white;
-      border-radius: 10px;
       font-weight: bold;
       padding: 12px;
+    }
+
+    .control-panel {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 10px;
+      margin-bottom: 20px;
     }
 
     .toolbar {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 12px;
+      gap: 15px;
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
@@ -127,7 +124,6 @@
       background: #e5e7eb;
       padding: 9px 15px;
       border-radius: 20px;
-      color: #302d29;
     }
 
     .filter-btn.active {
@@ -155,29 +151,34 @@
       gap: 12px;
       background: #f8fafc;
       border: 1px solid #e5e7eb;
-      border-radius: 12px;
       padding: 14px 16px;
       margin-bottom: 10px;
+      border-radius: 12px;
+    }
+
+    .task.overdue {
+      border-left: 5px solid #dc2626;
     }
 
     .task-left {
       display: flex;
-      align-items: center;
       gap: 12px;
+      align-items: flex-start;
       min-width: 0;
     }
 
     .task-left input[type="checkbox"] {
-      flex-shrink: 0;
       width: 17px;
       height: 17px;
+      flex-shrink: 0;
+      margin-top: 3px;
       cursor: pointer;
     }
 
     .task-info {
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 6px;
       min-width: 0;
     }
 
@@ -190,11 +191,19 @@
       color: #9ca3af;
     }
 
-    .priority {
-      width: fit-content;
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .priority,
+    .date-badge,
+    .overdue-badge {
+      display: inline-block;
       padding: 4px 8px;
       border-radius: 12px;
-      font-size: 12px;
       font-weight: bold;
     }
 
@@ -213,19 +222,43 @@
       color: #b91c1c;
     }
 
-    .delete-btn {
+    .date-badge {
+      background: #f5e9da;
+      color: #80552e;
+    }
+
+    .overdue-badge {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
       flex-shrink: 0;
+    }
+
+    .edit-btn,
+    .delete-btn {
       border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    .edit-btn {
+      background: #f5e9da;
+      color: #80552e;
+    }
+
+    .delete-btn {
       background: #fee2e2;
       color: #dc2626;
-      border-radius: 8px;
-      padding: 8px 12px;
     }
 
     .summary {
       margin-top: 22px;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
     }
 
@@ -240,7 +273,7 @@
     .summary-card strong {
       display: block;
       font-size: 24px;
-      margin-top: 5px;
+      margin-top: 4px;
     }
 
     .empty {
@@ -251,13 +284,13 @@
 
     footer {
       border-top: 1px solid #e5e7eb;
-      text-align: center;
       padding: 18px;
+      text-align: center;
       color: #6b7280;
       font-size: 13px;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 800px) {
       body {
         padding: 15px;
       }
@@ -267,16 +300,18 @@
       }
 
       .input-group,
+      .control-panel,
       .summary {
         grid-template-columns: 1fr;
       }
 
-      .toolbar {
-        align-items: flex-start;
+      .task {
+        flex-direction: column;
+        align-items: stretch;
       }
 
-      .task {
-        padding: 12px;
+      .actions {
+        justify-content: flex-end;
       }
 
       .header h1 {
@@ -287,321 +322,468 @@
 </head>
 
 <body>
-  <div class="app">
 
-    <div class="header">
-      <h1>☁ CloudTask</h1>
-      <p>Gestor de tareas interactivo</p>
-      <p>Desarrollado por García Veléz Kilmer Adrián</p>
-      <span class="version">Versión 1.1</span>
+<div class="app">
+
+  <div class="header">
+    <h1>☁ CloudTask</h1>
+    <p>Gestor de tareas interactivo</p>
+    <p>Desarrollado por García Veléz Kilmer Adrián</p>
+    <span class="version">Versión 1.2</span>
+  </div>
+
+  <div class="content">
+
+    <div class="input-group">
+      <input
+        id="taskInput"
+        type="text"
+        placeholder="Escribe una nueva tarea..."
+        maxlength="250"
+      >
+
+      <select id="prioritySelect">
+        <option value="baja">Prioridad baja</option>
+        <option value="media" selected>Prioridad media</option>
+        <option value="alta">Prioridad alta</option>
+      </select>
+
+      <input
+        id="dueDateInput"
+        type="date"
+        aria-label="Fecha límite de la tarea"
+      >
+
+      <button id="addTaskBtn">Agregar</button>
     </div>
 
-    <div class="content">
+    <div class="control-panel">
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="Buscar tareas..."
+      >
 
-      <div class="input-group">
-        <input
-          id="taskInput"
-          type="text"
-          placeholder="Escribe una nueva tarea..."
-          maxlength="250"
-          aria-label="Nombre de la nueva tarea"
-        >
-
-        <select id="prioritySelect" aria-label="Prioridad de la tarea">
-          <option value="baja">Prioridad baja</option>
-          <option value="media" selected>Prioridad media</option>
-          <option value="alta">Prioridad alta</option>
-        </select>
-
-        <button id="addTaskBtn">Agregar</button>
-      </div>
-
-      <div class="toolbar">
-        <div class="filters">
-          <button class="filter-btn active" data-filter="all">
-            Todas
-          </button>
-
-          <button class="filter-btn" data-filter="pending">
-            Pendientes
-          </button>
-
-          <button class="filter-btn" data-filter="completed">
-            Completadas
-          </button>
-        </div>
-
-        <button id="clearCompletedBtn" class="clear-btn">
-          Eliminar completadas
-        </button>
-      </div>
-
-      <ul id="taskList" class="task-list"></ul>
-
-      <div class="summary">
-        <div class="summary-card">
-          Total de tareas
-          <strong id="totalCount">0</strong>
-        </div>
-
-        <div class="summary-card">
-          Tareas pendientes
-          <strong id="pendingCount">0</strong>
-        </div>
-      </div>
-
+      <select id="sortSelect">
+        <option value="default">Orden original</option>
+        <option value="priority">Por prioridad</option>
+        <option value="date">Por fecha límite</option>
+      </select>
     </div>
 
-    <footer>
-      CloudTask v1.1 · Práctica de Computación en la Nube
-    </footer>
+    <div class="toolbar">
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">Todas</button>
+        <button class="filter-btn" data-filter="pending">Pendientes</button>
+        <button class="filter-btn" data-filter="completed">Completadas</button>
+      </div>
+
+      <button id="clearCompletedBtn" class="clear-btn">
+        Eliminar completadas
+      </button>
+    </div>
+
+    <ul id="taskList" class="task-list"></ul>
+
+    <div class="summary">
+      <div class="summary-card">
+        Total
+        <strong id="totalCount">0</strong>
+      </div>
+
+      <div class="summary-card">
+        Pendientes
+        <strong id="pendingCount">0</strong>
+      </div>
+
+      <div class="summary-card">
+        Vencidas
+        <strong id="overdueCount">0</strong>
+      </div>
+    </div>
 
   </div>
 
-  <script>
-    const taskInput = document.getElementById("taskInput");
-    const prioritySelect = document.getElementById("prioritySelect");
-    const addTaskBtn = document.getElementById("addTaskBtn");
-    const taskList = document.getElementById("taskList");
-    const pendingCount = document.getElementById("pendingCount");
-    const totalCount = document.getElementById("totalCount");
-    const filterButtons = document.querySelectorAll(".filter-btn");
-    const clearCompletedBtn = document.getElementById("clearCompletedBtn");
+  <footer>
+    CloudTask v1.2 · GitHub + Vercel / Netlify
+  </footer>
 
-    const STORAGE_KEY = "cloudTaskTasks";
-    let currentFilter = "all";
+</div>
 
-    const initialTasks = [
-      {
-        id: 1,
-        text: "Subir proyecto a GitHub",
-        completed: false,
-        priority: "alta"
-      },
-      {
-        id: 2,
-        text: "Desplegar aplicación en Vercel",
-        completed: false,
-        priority: "media"
-      },
-      {
-        id: 3,
-        text: "Probar aplicación desde el teléfono",
-        completed: true,
-        priority: "baja"
-      }
-    ];
+<script>
+  const taskInput = document.getElementById("taskInput");
+  const prioritySelect = document.getElementById("prioritySelect");
+  const dueDateInput = document.getElementById("dueDateInput");
+  const addTaskBtn = document.getElementById("addTaskBtn");
+  const taskList = document.getElementById("taskList");
 
-    function loadTasks() {
-      try {
-        const savedTasks = localStorage.getItem(STORAGE_KEY);
+  const totalCount = document.getElementById("totalCount");
+  const pendingCount = document.getElementById("pendingCount");
+  const overdueCount = document.getElementById("overdueCount");
 
-        if (savedTasks === null) {
-          return initialTasks.map(task => ({ ...task }));
-        }
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  const clearCompletedBtn = document.getElementById("clearCompletedBtn");
+  const searchInput = document.getElementById("searchInput");
+  const sortSelect = document.getElementById("sortSelect");
 
-        const parsedTasks = JSON.parse(savedTasks);
+  const STORAGE_KEY = "cloudTaskTasks";
 
-        if (
-          !Array.isArray(parsedTasks) ||
-          !parsedTasks.every(task =>
-            task &&
-            Number.isSafeInteger(task.id) &&
-            typeof task.text === "string" &&
-            typeof task.completed === "boolean" &&
-            ["baja", "media", "alta"].includes(task.priority)
-          )
-        ) {
-          return initialTasks.map(task => ({ ...task }));
-        }
+  let currentFilter = "all";
+  let editingId = null;
 
-        return parsedTasks;
-      } catch (error) {
-        console.error("No se pudieron cargar las tareas:", error);
+  const initialTasks = [
+    {
+      id: 1,
+      text: "Subir proyecto a GitHub",
+      completed: false,
+      priority: "alta",
+      dueDate: ""
+    },
+    {
+      id: 2,
+      text: "Desplegar aplicación en Vercel",
+      completed: false,
+      priority: "media",
+      dueDate: ""
+    },
+    {
+      id: 3,
+      text: "Probar aplicación desde el teléfono",
+      completed: true,
+      priority: "baja",
+      dueDate: ""
+    }
+  ];
+
+  function loadTasks() {
+    try {
+      const savedTasks = localStorage.getItem(STORAGE_KEY);
+
+      if (savedTasks === null) {
         return initialTasks.map(task => ({ ...task }));
       }
-    }
 
-    let tasks = loadTasks();
+      const parsedTasks = JSON.parse(savedTasks);
 
-    function saveTasks() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-      } catch (error) {
-        console.error("No se pudieron guardar las tareas:", error);
-        alert("No se pudieron guardar los cambios en este navegador.");
-      }
-    }
-
-    function renderTasks() {
-      taskList.innerHTML = "";
-
-      const filteredTasks = tasks.filter(task => {
-        if (currentFilter === "pending") return !task.completed;
-        if (currentFilter === "completed") return task.completed;
-        return true;
-      });
-
-      if (filteredTasks.length === 0) {
-        const emptyMessage = document.createElement("li");
-        emptyMessage.className = "empty";
-        emptyMessage.textContent = "No hay tareas para mostrar";
-        taskList.appendChild(emptyMessage);
+      if (
+        !Array.isArray(parsedTasks) ||
+        !parsedTasks.every(task =>
+          task &&
+          Number.isSafeInteger(task.id) &&
+          typeof task.text === "string" &&
+          typeof task.completed === "boolean" &&
+          ["baja", "media", "alta"].includes(task.priority)
+        )
+      ) {
+        return initialTasks.map(task => ({ ...task }));
       }
 
-      const priorityText = {
-        baja: "Baja",
-        media: "Media",
-        alta: "Alta"
-      };
+      return parsedTasks.map(task => ({
+        ...task,
+        dueDate: task.dueDate || ""
+      }));
+    } catch (error) {
+      console.error("Error al cargar las tareas:", error);
+      return initialTasks.map(task => ({ ...task }));
+    }
+  }
 
-      filteredTasks.forEach(task => {
-        const li = document.createElement("li");
-        li.className = "task";
+  let tasks = loadTasks();
 
-        if (task.completed) {
-          li.classList.add("completed");
-        }
+  function saveTasks() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    } catch (error) {
+      console.error("Error al guardar las tareas:", error);
+      alert("No se pudieron guardar los cambios en el navegador.");
+    }
+  }
 
-        const taskLeft = document.createElement("div");
-        taskLeft.className = "task-left";
-
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.checked = task.completed;
-        checkbox.setAttribute(
-          "aria-label",
-          "Marcar como completada: " + task.text
-        );
-
-        checkbox.addEventListener("change", () => {
-          toggleTask(task.id);
-        });
-
-        const taskInfo = document.createElement("div");
-        taskInfo.className = "task-info";
-
-        const taskText = document.createElement("span");
-        taskText.className = "task-text";
-        taskText.textContent = task.text;
-
-        const priority = document.createElement("span");
-        priority.className = "priority priority-" + task.priority;
-        priority.textContent = "Prioridad " + priorityText[task.priority];
-
-        taskInfo.appendChild(taskText);
-        taskInfo.appendChild(priority);
-
-        taskLeft.appendChild(checkbox);
-        taskLeft.appendChild(taskInfo);
-
-        const deleteButton = document.createElement("button");
-        deleteButton.className = "delete-btn";
-        deleteButton.textContent = "Eliminar";
-        deleteButton.setAttribute("aria-label", "Eliminar: " + task.text);
-
-        deleteButton.addEventListener("click", () => {
-          deleteTask(task.id);
-        });
-
-        li.appendChild(taskLeft);
-        li.appendChild(deleteButton);
-        taskList.appendChild(li);
-      });
-
-      updateCounters();
+  function isOverdue(task) {
+    if (!task.dueDate || task.completed) {
+      return false;
     }
 
-    function addTask() {
-      const text = taskInput.value.trim();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-      if (text === "") {
-        alert("Escribe una tarea.");
-        taskInput.focus();
-        return;
+    const due = new Date(task.dueDate + "T00:00:00");
+
+    return !Number.isNaN(due.getTime()) && due < today;
+  }
+
+  function renderTasks() {
+    taskList.innerHTML = "";
+
+    let visibleTasks = [...tasks];
+
+    if (currentFilter === "pending") {
+      visibleTasks = visibleTasks.filter(task => !task.completed);
+    }
+
+    if (currentFilter === "completed") {
+      visibleTasks = visibleTasks.filter(task => task.completed);
+    }
+
+    const searchText = searchInput.value.toLowerCase().trim();
+
+    if (searchText) {
+      visibleTasks = visibleTasks.filter(task =>
+        task.text.toLowerCase().includes(searchText)
+      );
+    }
+
+    if (sortSelect.value === "priority") {
+      const order = { alta: 1, media: 2, baja: 3 };
+
+      visibleTasks.sort(
+        (a, b) => order[a.priority] - order[b.priority]
+      );
+    }
+
+    if (sortSelect.value === "date") {
+      visibleTasks.sort((a, b) => {
+        if (!a.dueDate && !b.dueDate) return 0;
+        if (!a.dueDate) return 1;
+        if (!b.dueDate) return -1;
+
+        return a.dueDate.localeCompare(b.dueDate);
+      });
+    }
+
+    if (visibleTasks.length === 0) {
+      const emptyMessage = document.createElement("li");
+      emptyMessage.className = "empty";
+      emptyMessage.textContent = "No hay tareas para mostrar";
+      taskList.appendChild(emptyMessage);
+    }
+
+    const priorityText = {
+      baja: "Baja",
+      media: "Media",
+      alta: "Alta"
+    };
+
+    visibleTasks.forEach(task => {
+      const li = document.createElement("li");
+      li.className = "task";
+
+      if (task.completed) {
+        li.classList.add("completed");
       }
 
-      tasks.push({
-        id: Date.now(),
-        text: text,
-        completed: false,
-        priority: prioritySelect.value
-      });
+      if (isOverdue(task)) {
+        li.classList.add("overdue");
+      }
 
-      taskInput.value = "";
-      prioritySelect.value = "media";
+      const taskLeft = document.createElement("div");
+      taskLeft.className = "task-left";
 
-      saveTasks();
-      renderTasks();
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = task.completed;
+      checkbox.setAttribute("aria-label", "Marcar tarea como completada");
+
+      checkbox.addEventListener("change", () => toggleTask(task.id));
+
+      const taskInfo = document.createElement("div");
+      taskInfo.className = "task-info";
+
+      const taskText = document.createElement("span");
+      taskText.className = "task-text";
+      taskText.textContent = task.text;
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+
+      const priority = document.createElement("span");
+      priority.className = "priority priority-" + task.priority;
+      priority.textContent = "Prioridad " + priorityText[task.priority];
+      meta.appendChild(priority);
+
+      if (task.dueDate) {
+        const dateBadge = document.createElement("span");
+        dateBadge.className = "date-badge";
+        dateBadge.textContent = "Fecha: " + task.dueDate;
+        meta.appendChild(dateBadge);
+      }
+
+      if (isOverdue(task)) {
+        const overdueBadge = document.createElement("span");
+        overdueBadge.className = "overdue-badge";
+        overdueBadge.textContent = "Vencida";
+        meta.appendChild(overdueBadge);
+      }
+
+      taskInfo.appendChild(taskText);
+      taskInfo.appendChild(meta);
+      taskLeft.appendChild(checkbox);
+      taskLeft.appendChild(taskInfo);
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      const editButton = document.createElement("button");
+      editButton.className = "edit-btn";
+      editButton.textContent = "Editar";
+      editButton.addEventListener("click", () => editTask(task.id));
+
+      const deleteButton = document.createElement("button");
+      deleteButton.className = "delete-btn";
+      deleteButton.textContent = "Eliminar";
+      deleteButton.addEventListener("click", () => deleteTask(task.id));
+
+      actions.appendChild(editButton);
+      actions.appendChild(deleteButton);
+
+      li.appendChild(taskLeft);
+      li.appendChild(actions);
+      taskList.appendChild(li);
+    });
+
+    updateCounters();
+  }
+
+  function addOrUpdateTask() {
+    const text = taskInput.value.trim();
+
+    if (!text) {
+      alert("Escribe una tarea.");
       taskInput.focus();
+      return;
     }
 
-    function toggleTask(id) {
+    const priority = prioritySelect.value;
+    const dueDate = dueDateInput.value;
+
+    if (editingId !== null) {
       tasks = tasks.map(task =>
-        task.id === id
-          ? { ...task, completed: !task.completed }
+        task.id === editingId
+          ? { ...task, text, priority, dueDate }
           : task
       );
 
-      saveTasks();
-      renderTasks();
+      editingId = null;
+      addTaskBtn.textContent = "Agregar";
+    } else {
+      tasks.push({
+        id: Date.now(),
+        text,
+        completed: false,
+        priority,
+        dueDate
+      });
     }
 
-    function deleteTask(id) {
-      tasks = tasks.filter(task => task.id !== id);
+    taskInput.value = "";
+    prioritySelect.value = "media";
+    dueDateInput.value = "";
 
-      saveTasks();
-      renderTasks();
-    }
+    saveTasks();
+    renderTasks();
+  }
 
-    function clearCompletedTasks() {
-      if (!tasks.some(task => task.completed)) {
-        alert("No hay tareas completadas.");
-        return;
-      }
+  function editTask(id) {
+    const task = tasks.find(task => task.id === id);
 
-      if (confirm("¿Eliminar todas las tareas completadas?")) {
-        tasks = tasks.filter(task => !task.completed);
+    if (!task) return;
 
-        saveTasks();
-        renderTasks();
-      }
-    }
+    taskInput.value = task.text;
+    prioritySelect.value = task.priority;
+    dueDateInput.value = task.dueDate || "";
 
-    function updateCounters() {
-      totalCount.textContent = tasks.length;
+    editingId = id;
+    addTaskBtn.textContent = "Guardar";
+    taskInput.focus();
+  }
 
-      pendingCount.textContent =
-        tasks.filter(task => !task.completed).length;
-    }
-
-    addTaskBtn.addEventListener("click", addTask);
-
-    taskInput.addEventListener("keydown", event => {
-      if (event.key === "Enter") {
-        addTask();
-      }
-    });
-
-    clearCompletedBtn.addEventListener(
-      "click",
-      clearCompletedTasks
+  function toggleTask(id) {
+    tasks = tasks.map(task =>
+      task.id === id
+        ? { ...task, completed: !task.completed }
+        : task
     );
 
-    filterButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        filterButtons.forEach(btn => {
-          btn.classList.remove("active");
-        });
-
-        button.classList.add("active");
-        currentFilter = button.dataset.filter;
-
-        renderTasks();
-      });
-    });
-
+    saveTasks();
     renderTasks();
-  </script>
+  }
+
+  function deleteTask(id) {
+    tasks = tasks.filter(task => task.id !== id);
+
+    if (editingId === id) {
+      cancelEditing();
+    }
+
+    saveTasks();
+    renderTasks();
+  }
+
+  function cancelEditing() {
+    editingId = null;
+    taskInput.value = "";
+    prioritySelect.value = "media";
+    dueDateInput.value = "";
+    addTaskBtn.textContent = "Agregar";
+  }
+
+  function clearCompletedTasks() {
+    if (!tasks.some(task => task.completed)) {
+      alert("No hay tareas completadas.");
+      return;
+    }
+
+    if (confirm("¿Eliminar todas las tareas completadas?")) {
+      tasks = tasks.filter(task => !task.completed);
+
+      if (editingId !== null && !tasks.some(task => task.id === editingId)) {
+        cancelEditing();
+      }
+
+      saveTasks();
+      renderTasks();
+    }
+  }
+
+  function updateCounters() {
+    totalCount.textContent = tasks.length;
+
+    pendingCount.textContent =
+      tasks.filter(task => !task.completed).length;
+
+    overdueCount.textContent =
+      tasks.filter(task => isOverdue(task)).length;
+  }
+
+  addTaskBtn.addEventListener("click", addOrUpdateTask);
+
+  taskInput.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      addOrUpdateTask();
+    }
+
+    if (event.key === "Escape" && editingId !== null) {
+      cancelEditing();
+    }
+  });
+
+  clearCompletedBtn.addEventListener("click", clearCompletedTasks);
+  searchInput.addEventListener("input", renderTasks);
+  sortSelect.addEventListener("change", renderTasks);
+
+  filterButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      filterButtons.forEach(btn => btn.classList.remove("active"));
+
+      button.classList.add("active");
+      currentFilter = button.dataset.filter;
+
+      renderTasks();
+    });
+  });
+
+  renderTasks();
+</script>
+
 </body>
 </html>
